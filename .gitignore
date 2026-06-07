@@ -1,0 +1,22 @@
+# ===== Secrets / Env =====
+.env
+config.env
+**/config.env
+*.env
+!*.env.example
+!**/config.env.example
+
+**/*-secret.local.yaml
+
+# ===== Go =====
+*.exe
+*.out
+
+# ===== Node / React =====
+node_modules/
+dist/
+
+# ===== OS / IDE =====
+.DS_Store
+.vscode/
+.idea/
