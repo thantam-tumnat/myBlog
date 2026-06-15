@@ -4,9 +4,7 @@ import (
 	"blogservice/configs"
 	"blogservice/modules/entities"
 	"blogservice/modules/logs"
-	"fmt"
 
-	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
 
@@ -22,20 +20,16 @@ func NewUserService(blogRepo entities.BlogRepository, cfg *configs.Configs) enti
 	}
 }
 
-func (s *blogService) BlogCreated(userId int, blogReq *entities.BlogRequest) (int, fiber.Map) {
+func (s *blogService) BlogCreated(userId int, blogReq *entities.BlogRequest) (*entities.BlogRes, error) {
 	check, err := s.blogRepo.CheckUser(userId)
 	if err != nil {
 		logs.Info("There are no users in the system.", zap.String("error", err.Error()))
-		return fiber.ErrBadRequest.Code, fiber.Map{
-			"message": fmt.Sprintf("BadRequest : %v", err),
-		}
+		return nil, err
 	}
 	user, err := s.blogRepo.GetUser(check)
 	if err != nil {
 		logs.Info("Can't get user.", zap.String("error", err.Error()))
-		return fiber.ErrBadRequest.Code, fiber.Map{
-			"message": fmt.Sprintf("BadRequest : %v", err),
-		}
+		return nil, err
 	}
 	blog := entities.Blog{
 		Title:      blogReq.Title,
@@ -51,21 +45,19 @@ func (s *blogService) BlogCreated(userId int, blogReq *entities.BlogRequest) (in
 	created, err := s.blogRepo.CreateBlog(&blog)
 	if err != nil {
 		logs.Info("Can't create blog", zap.String("error", err.Error()))
-
-		return fiber.ErrBadRequest.Code, fiber.Map{
-			"message": fmt.Sprintf("BadRequest : %v", err),
-		}
+		return nil, err
 	}
 
-	blogIdResponse := created.ID
-
-	return fiber.StatusOK, fiber.Map{
-		"message":    "blog successfully created.",
-		"TaskId":     blogIdResponse,
-		"data":       created,
-		"status":     "OK",
-		"statusCode": 200,
-	}
+	return &entities.BlogRes{
+		BlogId:     created.ID,
+		Title:      created.Title,
+		BlogDesc:   created.BlogDesc,
+		Content:    created.Content,
+		CoverImage: created.CoverImage,
+		UserName:   created.UserName,
+		UserDesc:   created.UserDesc,
+		UserImage:  created.UserImage,
+	}, nil
 }
 
 func (s *blogService) BlogGets() (*[]entities.BlogRes, error) {

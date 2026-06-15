@@ -1,9 +1,5 @@
 package entities
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
-
 type BlogRepository interface {
 	CreateBlog(blog *Blog) (*Blog, error)
 	GetBlogs() ([]Blog, error)
@@ -14,6 +10,6 @@ type BlogRepository interface {
 }
 
 type BlogService interface {
-	BlogCreated(userId int, blogReq *BlogRequest) (int, fiber.Map)
+	BlogCreated(userId int, blogReq *BlogRequest) (*BlogRes, error)
 	BlogGets() (*[]BlogRes, error)
 }

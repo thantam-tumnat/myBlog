@@ -50,8 +50,22 @@ func (h *blogHandler) CreateBlog(c *fiber.Ctx) error {
 		})
 	}
 
-	codeStatus, response := h.blogService.BlogCreated(userIdInt, &blogRequestBody)
-	return c.Status(codeStatus).JSON(response)
+	blog, err := h.blogService.BlogCreated(userIdInt, &blogRequestBody)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message":    "Can't create blog",
+			"dev":        err.Error(),
+			"status":     fiber.ErrBadRequest.Message,
+			"statusCode": fiber.ErrBadRequest.Code,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "blog successfully created.",
+		"blogId":  blog.BlogId,
+		"data":    blog,
+		"status":  fiber.StatusOK,
+	})
 }
 
 func (h *blogHandler) GetBlogs(c *fiber.Ctx) error {
