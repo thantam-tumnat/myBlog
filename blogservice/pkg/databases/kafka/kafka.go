@@ -17,7 +17,7 @@ func NewKafkaConsumerGroup(cfg *configs.Configs) (sarama.ConsumerGroup, error) {
 	if err != nil {
 		return nil, err
 	}
-	consumer, err := sarama.NewConsumerGroup([]string{serversUrl1}, "tcchub.task", saramaConfig)
+	consumer, err := sarama.NewConsumerGroup([]string{serversUrl1}, "myblogs.blogservice", saramaConfig)
 	if err != nil {
 		return nil, err
 	}

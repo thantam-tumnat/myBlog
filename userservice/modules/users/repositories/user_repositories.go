@@ -70,25 +70,24 @@ func (r userRepositoryRedis) CreateUser(user *entities.User) (*entities.User, er
 
 func (r userRepositoryRedis) GetUsers() ([]entities.User, error) {
 	users := []entities.User{}
+	key := "userrepository::GetUsers"
+
+	// 1) Check the cache first. On a hit, return without touching the DB.
+	cachedJson, err := r.client.Get(context.Background(), key).Result()
+	if err == nil {
+		if err = json.Unmarshal([]byte(cachedJson), &users); err == nil {
+			logs.Info("Users Retrieved From Redis")
+			return users, nil
+		}
+	}
+
+	// 2) Cache miss: query the DB.
 	result := r.db.Find(&users)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	key := "userrepository::GetUsers"
-
-	// Check if data is cached in Redis
-	productsJson, err := r.client.Get(context.Background(), key).Result()
-	if err == nil {
-		// Unmarshal cached data if available
-		err = json.Unmarshal([]byte(productsJson), &users)
-		if err == nil {
-			logs.Info("Tags Retrieved From Redis")
-			return users, nil
-		}
-	}
-
-	// Cache the result in Redis
+	// 3) Populate the cache for subsequent reads.
 	data, err := json.Marshal(users)
 	if err != nil {
 		logs.Error(err)
