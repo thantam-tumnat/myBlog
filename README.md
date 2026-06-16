@@ -43,18 +43,9 @@ cd blogservice/app && go run main.go     # :8002
 cd my-blog-react && npm install && npm run dev   # :8003
 ```
 
-## 📚 Documentation
+## ผลลัพธ์การเชื่อมต่อ Tools และ Infras 
 
-บทความอธิบายแนวคิดเบื้องหลังโปรเจกต์
-
-- [Clean Architecture กับ Microservice — คนละชั้น ไม่ทับซ้อนกัน](docs/clean-architecture-vs-microservice.md)
-- [Kafka + Redis + Kubernetes ใช้ร่วมกันใน Microservices จริง ๆ อย่างไร](docs/kafka-redis-k8s-article.md)
-
-## 🧪 Feature Demos (หลักฐานว่าแต่ละ tool ทำงานจริง)
-
-แต่ละหน้ามีคำสั่งที่รันแล้วเห็นผล + screenshot ผลจริง + คำอธิบาย
-
-- [Redis — caching / cache hit / TTL](docs/demo/redis.md)
+- [Redis — caching / cache hit ](docs/demo/redis.md)
 - [Kafka — produce / consume event ข้าม service](docs/demo/kafka.md)
 - [PostgreSQL — schema migration & query (จาก terminal docker)](docs/demo/database.md)
 - [Kubernetes — deploy บน cluster / self-healing](docs/demo/kubernetes.md)
