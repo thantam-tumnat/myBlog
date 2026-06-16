@@ -5,14 +5,23 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // ── design tokens (แก้ธีมที่นี่ที่เดียว) ──
+        ink: "#18181b",      // ตัวอักษรหลัก (เกือบดำ)
+        body: "#3f3f46",     // ตัวอักษรเนื้อหา
+        muted: "#71717a",    // ตัวอักษรรอง
+        accent: "#4f46e5",   // สีเน้น (indigo)
+        accentDark: "#4338ca",
+        line: "#e4e4e7",     // เส้นขอบ
+        surface: "#fafafa",  // พื้นหลังโซน
+        // เก็บไว้เผื่อโค้ดเก่าอ้างถึง
         primary: "#00040f",
-        secondary: "#00f6ff",
-        dimWhite: "rgba(255, 255, 255, 0.7)",
-        dimBlue: "rgba(9, 151, 124, 0.1)",
-        myblogbg: "#242424",
+        myblogbg: "#18181b",
       },
       fontFamily: {
-        poppins: ["Poppins", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+      },
+      maxWidth: {
+        prose: "42rem", // ความกว้างเหมาะกับการอ่าน
       },
     },
     screens: {
