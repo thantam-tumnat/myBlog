@@ -1,43 +1,67 @@
 import { Link } from 'react-router-dom';
 
-export default function Blogs({blogs, loading, error}) {
-    // กันพัง: ถ้ายังไม่มีข้อมูล ใช้ลิสต์ว่างแทน (เลี่ยง blogs.data ที่อาจ undefined)
-    const list = blogs && blogs.data ? blogs.data : [];
+// รูปสำรองเมื่อ coverImage ว่างหรือโหลดไม่ขึ้น
+const FALLBACK_IMG =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="#f4f4f5"/><text x="50%" y="50%" fill="#a1a1aa" font-family="sans-serif" font-size="20" text-anchor="middle" dominant-baseline="middle">no image</text></svg>'
+  );
 
-    return (
-        <div className='w-full bg-[#f9f9f9] py-[50px] min-h-[300px]'>
-        <div className='max-w-[1240px] mx-auto'>
+export default function Blogs({ blogs, loading, error }) {
+  // กันพัง: ถ้ายังไม่มีข้อมูล ใช้ลิสต์ว่างแทน
+  const list = blogs && blogs.data ? blogs.data : [];
 
-            {/* แสดงสถานะเฉพาะพื้นที่รายการ blog — Navbar/Footer ยังอยู่ครบ */}
-            {loading && (
-                <p className='text-center text-gray-500 text-xl'>กำลังโหลดบทความ...</p>
-            )}
-            {!loading && error && (
-                <p className='text-center text-gray-500 text-xl'>
-                    ขณะนี้ยังโหลดบทความไม่ได้ (เซิร์ฟเวอร์ออฟไลน์)
-                </p>
-            )}
-            {!loading && !error && list.length === 0 && (
-                <p className='text-center text-gray-500 text-xl'>ยังไม่มีบทความ</p>
-            )}
+  return (
+    <section className="wrap border-t border-line py-14">
+      <div className="mb-8 flex items-baseline justify-between">
+        <h2 className="text-2xl sm:text-3xl">Latest posts</h2>
+        {!loading && !error && list.length > 0 && (
+          <span className="text-sm text-muted">{list.length} บทความ</span>
+        )}
+      </div>
 
-            <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 ss:grid-cols-1 gap-8 px-4 text-black'>
-            {list.map((blog)=>
-                <Link key={blog.blogId} to={`/blog/${blog.blogId}`}>
-                    <div  className='bg-white rounded-xl overflow-hidden drop-shadow-md'>
-                        <img className='h-56 w-full object-cover' src={blog.coverImage} />
-                        <div className='p-8'>
-                            <h3 className='font-bold text-2xl my-1'>{blog.title}</h3>
-                            <p className='text-gray-600 text-xl'>{blog.blogDesc}</p>
-                        </div>
-                    </div>
-                </Link>
+      {/* สถานะ */}
+      {loading && <p className="py-10 text-center text-muted">กำลังโหลดบทความ…</p>}
+      {!loading && error && (
+        <p className="py-10 text-center text-muted">
+          ขณะนี้ยังโหลดบทความไม่ได้ (เซิร์ฟเวอร์ออฟไลน์)
+        </p>
+      )}
+      {!loading && !error && list.length === 0 && (
+        <p className="py-10 text-center text-muted">ยังไม่มีบทความ</p>
+      )}
 
-            )}
-
+      {/* การ์ดบล็อก — ซ้ายชิด ขนาดสม่ำเสมอ hover ยกขึ้น */}
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {list.map((blog) => (
+          <Link
+            key={blog.blogId}
+            to={`/blog/${blog.blogId}`}
+            className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-zinc-200"
+          >
+            <div className="aspect-[16/10] overflow-hidden bg-surface">
+              <img
+                src={blog.coverImage || FALLBACK_IMG}
+                onError={(e) => {
+                  e.currentTarget.src = FALLBACK_IMG;
+                }}
+                alt={blog.title}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
             </div>
-        </div>
-    </div>
-
-    )
+            <div className="flex flex-1 flex-col p-6">
+              <h3 className="text-xl font-bold leading-snug text-ink transition-colors group-hover:text-accent">
+                {blog.title}
+              </h3>
+              <p className="mt-2 line-clamp-3 text-body">{blog.blogDesc}</p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent">
+                Read more
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
 }
