@@ -1,21 +1,33 @@
+# ============================================================
+# Kubernetes manifest สำหรับ deploy blogservice บน cluster
+# ใช้ตอน: kubectl apply -f deploy.yaml  (ไม่เกี่ยวกับการรัน local)
+# ในไฟล์นี้มี 3 resource คั่นด้วย ---  : Deployment, Service, Ingress
+# ============================================================
+
+# ---------- ส่วนที่ 1: Deployment ----------
+# สั่ง k8s ให้รัน container ของ blog + คุมจำนวน/อัปเดต
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
+metadata:
   name: blog
 spec:
   selector:
     matchLabels:
-      app: blog
+      app: blog            # จับคู่กับ pod ที่ติด label app=blog
   template:
     metadata:
       labels:
-        app: blog
+        app: blog          # label ติดให้ pod (ให้ Service/Deployment หาเจอ)
     spec:
       containers:
       - name: blog
-        image: registry.gitlab.com/ittipatlk/blog/sample:latest
+        # image ที่ build จากโค้ด blogservice แล้ว push ขึ้น container registry
+        # (เปลี่ยน tag :latest เป็นเวอร์ชันจริงตอน release ได้)
+        image: ghcr.io/thantam-tumnat/blogservice:latest
         ports:
-        - containerPort: 8002
+        - containerPort: 8002   # พอร์ตที่แอปฟังภายใน container
+        # env ของ k8s ใช้ "ชื่อ service" (postgres/kafka/redis) แทน localhost
+        # เพราะใน cluster แต่ละตัวคุยกันด้วยชื่อ service ไม่ใช่ localhost
         env:
         - name: APP_HOST
           value: "localhost"
@@ -34,6 +46,7 @@ spec:
         - name: DB_USERNAME_BLOG
           value: "postgres"
         - name: DB_PASSWORD_BLOG
+          # รหัสผ่านไม่ hardcode — ดึงจาก Secret "postgres-secret" คีย์ password
           valueFrom:
             secretKeyRef:
               name: postgres-secret
@@ -56,11 +69,16 @@ spec:
           value: "redis"
         - name: REDIS_PORT
           value: "6379"
+  # วิธีอัปเดตเวอร์ชันใหม่: ค่อย ๆ เปลี่ยนทีละ pod ไม่ดับทั้งหมดพร้อมกัน (zero-downtime)
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
+      maxUnavailable: 1    # ระหว่างอัปเดต ยอมให้ pod ใช้ไม่ได้สูงสุด 1
+      maxSurge: 1          # สร้าง pod เกินเป้าได้สูงสุด 1 ระหว่างเปลี่ยน
+
+# ---------- ส่วนที่ 2: Service ----------
+# สร้าง "ที่อยู่" ภายใน cluster ชื่อ blog เพื่อให้ตัวอื่นเรียกถึง
+# (pod มี IP ไม่แน่นอน Service เป็นชื่อคงที่ที่ route ไปหา pod ให้)
 ---
 apiVersion: v1
 kind: Service
@@ -68,23 +86,28 @@ metadata:
   name: blog
 spec:
   ports:
-    - port: 8002
-      targetPort: 8002
+    - port: 8002         # พอร์ตที่ service เปิดให้เรียก
+      targetPort: 8002   # ส่งต่อไปพอร์ตของ container
       protocol: TCP
   selector:
-    app: blog
+    app: blog            # ส่ง traffic ไปยัง pod ที่ label app=blog
+
+# ---------- ส่วนที่ 3: Ingress ----------
+# ประตูจากภายนอก cluster เข้ามา — map path ของ URL ไปยัง service blog
+# (ต้องมี ingress controller เช่น nginx ติดตั้งใน cluster ก่อนถึงทำงาน)
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: blog-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/ingress.class: "nginx"   # ใช้ nginx เป็นตัวจัดการ ingress
 spec:
   rules:
   - host: localhost
     http:
       paths:
+      # ขอที่ขึ้นต้น /v1/myblogs/getBlogs → ส่งไป service blog พอร์ต 8002
       - path: /v1/myblogs/getBlogs
         pathType: Prefix
         backend:
@@ -92,6 +115,7 @@ spec:
             name: blog
             port:
               number: 8002
+      # ขอที่ขึ้นต้น /v1/myblogs/createBlog → ส่งไป service blog เช่นกัน
       - path: /v1/myblogs/createBlog
         pathType: Prefix
         backend:
