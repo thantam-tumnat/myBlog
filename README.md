@@ -13,34 +13,33 @@ React (Vite) ──HTTP──► userservice ──Kafka event──► blogserv
                       PostgreSQL  ◄── Redis (cache) ──►  PostgreSQL
 ```
 
-- **userservice** — จัดการผู้ใช้ และ produce event เข้า Kafka
-- **blogservice** — จัดการบล็อก และ consume event จาก userservice
+- **userservice** — Manage user and produce event เข้า Kafka
+- **blogservice** — Manage blog and consume event จาก userservice
 
 ## Tech Stack
 
 | Layer | Tech |
 |---|---|
-| Frontend | React (Vite), TailwindCSS |
-| Backend | Go (Fiber, Clean Architecture, GORM) |
-| Database | PostgreSQL |
-| Cache | Redis |
+| Frontend | React 18 (Vite), TailwindCSS |
+| Backend | Go 1.20 (Fiber, GORM) |
+| Database | PostgreSQL 16, Redis |
 | Message Queue | Kafka |
 | Infra | Docker Compose, Kubernetes |
 
 ## Run locally
 
-ต้องมี Docker Desktop, Go, Node.js
+Require - Docker Desktop, Go, Node.js
 
 ```bash
-# 1. ยก infra (postgres, redis, kafka, zookeeper)
+# 1. run infra (postgres, redis, kafka, zookeeper)
 docker-compose up -d
 
-# 2. รัน backend (คนละ terminal, รันจากในโฟลเดอร์ app/)
-cd userservice/app && go run main.go     # :8001
-cd blogservice/app && go run main.go     # :8002
+# 2. run backend 
+cd userservice/app && go run main.go     
+cd blogservice/app && go run main.go     
 
-# 3. รัน frontend
-cd my-blog-react && npm install && npm run dev   # :8003
+# 3. run frontend
+cd my-blog-react && npm install && npm run dev   
 ```
 
 ## ผลลัพธ์การเชื่อมต่อ Tools และ Infras 
