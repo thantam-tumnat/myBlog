@@ -13,8 +13,8 @@ React (Vite) ──HTTP──► userservice ──Kafka event──► blogserv
                       PostgreSQL  ◄── Redis (cache) ──►  PostgreSQL
 ```
 
-- **userservice** — Manage user and produce event เข้า Kafka
-- **blogservice** — Manage blog and consume event จาก userservice
+- **userservice** — Manage user and produce event into Kafka
+- **blogservice** — Manage blog and consume event from userservice
 
 ## Tech Stack
 
