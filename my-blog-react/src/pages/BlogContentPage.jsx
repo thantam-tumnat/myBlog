@@ -1,16 +1,17 @@
-import Navbar  from '../components/Navbar'
+import Navbar from '../components/Navbar'
 import BlogContent from '../components/BlogContent'
 import Footer from '../components/Footer'
 import React from 'react'
 
-function BlogContentPage({blogs}) {
-  console.log(blogs)
+function BlogContentPage({ blogs }) {
   return (
-      <div>
-        <Navbar />
-        <BlogContent blogs={blogs}/>   
-        <Footer />
-      </div> 
+    <div className="flex min-h-screen flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <BlogContent blogs={blogs} />
+      </main>
+      <Footer />
+    </div>
   )
 }
 
