@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: user
-        image: registry.gitlab.com/ittipatlk/user/sample:latest
+        image: ghcr.io/thantam-tumnat/userservice:latest
         ports:
         - containerPort: 8001
         env:
