@@ -20,3 +20,6 @@ dist/
 .DS_Store
 .vscode/
 .idea/
+
+README.improved.md
+seed-articles.mjs

@@ -42,12 +42,9 @@ cd blogservice/app && go run main.go
 cd my-blog-react && npm install && npm run dev   
 ```
 
-## ผลลัพธ์การเชื่อมต่อ Tools และ Infras 
+## ผลลัพธ์การเชื่อมต่อ Tools และ Infras
 
-- [Redis — caching / cache hit ](docs/demo/redis.md)
-- [Kafka — produce / consume event ข้าม service](docs/demo/kafka.md)
-- [PostgreSQL — schema migration & query (จาก terminal docker)](docs/demo/database.md)
-- [Kubernetes — deploy บน cluster / self-healing](docs/demo/kubernetes.md)
+_เร็ว ๆ นี้ — กำลังเตรียม screenshot การทำงานของแต่ละ tool_
 
 ## API (summary)
 
