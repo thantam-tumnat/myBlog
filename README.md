@@ -2,7 +2,6 @@
 
 A blog platform built with **Go microservices** (Fiber, Clean Architecture) communicating through **Kafka**, with a **React** frontend. Uses **PostgreSQL**, **Redis** caching, and is deployable with **Docker Compose** or **Kubernetes**.
 
-![demo](image.png)
 
 ## Architecture
 
@@ -41,10 +40,6 @@ cd blogservice/app && go run main.go
 # 3. run frontend
 cd my-blog-react && npm install && npm run dev   
 ```
-
-## ผลลัพธ์การเชื่อมต่อ Tools และ Infras
-
-_เร็ว ๆ นี้ — กำลังเตรียม screenshot การทำงานของแต่ละ tool_
 
 ## API (summary)
 
