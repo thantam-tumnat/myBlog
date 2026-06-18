@@ -1,4 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const FALLBACK_IMG =
   'data:image/svg+xml;utf8,' +
@@ -45,8 +47,10 @@ export default function BlogsContent({ blogs }) {
         className="mt-8 aspect-[16/9] w-full rounded-2xl object-cover"
       />
 
-      {/* เนื้อหา */}
-      <div className="prose-content line-break mt-8">{blog.content}</div>
+      {/* เนื้อหา (render markdown) */}
+      <div className="prose-content mt-8">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{blog.content || ''}</ReactMarkdown>
+      </div>
     </article>
   );
 }
