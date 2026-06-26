@@ -5,6 +5,7 @@ import (
 	_blogController "blogservice/modules/blogs/controllers"
 	_blogRepo "blogservice/modules/blogs/repositories"
 	_blogUse "blogservice/modules/blogs/usecases"
+	"blogservice/modules/middlewares"
 
 	_blogHandlerConsumer "blogservice/modules/consumer/handler"
 	_blogUsecaseConsumer "blogservice/modules/consumer/usecases"
@@ -25,7 +26,8 @@ func (s *server) Handlers() error {
 	blogConsumerHandler := _blogHandlerConsumer.NewConsumerHandler(blogUsecasesConsumer)
 	s.consumerGroupHandler = blogConsumerHandler
 
-	_blogController.NewBlogHandler(blogGroup, blogUsecases)
+	authMiddleware := middlewares.JWTAuth(s.Cfg.Jwt.Secret)
+	_blogController.NewBlogHandler(blogGroup, blogUsecases, authMiddleware)
 
 	// End point not found response
 	s.App.Use(func(c *fiber.Ctx) error {

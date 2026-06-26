@@ -3,7 +3,7 @@ package controllers
 import (
 	"blogservice/modules/entities"
 	"blogservice/modules/logs"
-	"strconv"
+	"blogservice/modules/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -13,34 +13,25 @@ type blogHandler struct {
 	blogService entities.BlogService
 }
 
-func NewBlogHandler(r fiber.Router, blogService entities.BlogService) {
+func NewBlogHandler(r fiber.Router, blogService entities.BlogService, authMiddleware fiber.Handler) {
 
 	controller := &blogHandler{blogService: blogService}
 
-	r.Post("/createBlog/:userId", controller.CreateBlog)
+	r.Post("/createBlog", authMiddleware, controller.CreateBlog)
 	r.Get("/getBlogs", controller.GetBlogs)
 }
 
 func (h *blogHandler) CreateBlog(c *fiber.Ctx) error {
-	//param
-	userID := c.Params("userId")
-
-	if userID == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message":    "userId could't empty",
-			"status":     fiber.ErrBadRequest.Message,
-			"statusCode": fiber.ErrBadRequest.Code,
+	// userId comes from the verified JWT, not the URL — callers can't forge it.
+	userID, ok := c.Locals(middlewares.UserIDKey).(uint)
+	if !ok || userID == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message":    "unauthorized",
+			"status":     fiber.ErrUnauthorized.Message,
+			"statusCode": fiber.ErrUnauthorized.Code,
 		})
 	}
-
-	userIdInt, err := strconv.Atoi(userID)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message":    "Can't convert string to int",
-			"status":     fiber.ErrBadRequest.Message,
-			"statusCode": fiber.ErrBadRequest.Code,
-		})
-	}
+	userIdInt := int(userID)
 
 	var blogRequestBody entities.BlogRequest
 	if err := c.BodyParser(&blogRequestBody); err != nil {

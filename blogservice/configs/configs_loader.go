@@ -36,6 +36,11 @@ func LoadConfigs(cfg *Configs) {
 	cfg.Redis.Port = os.Getenv("REDIS_PORT")
 	// cfg.Redis.Password = os.Getenv("REDIS_PASSWORD")
 
+	cfg.Jwt.Secret = os.Getenv("JWT_SECRET")
+	if cfg.Jwt.Secret == "" {
+		panic("JWT_SECRET is required")
+	}
+
 	logs.Info(fmt.Sprintf("Task App      --> Port : %v", cfg.App.Port))
 	logs.Info(fmt.Sprintf("Task Database --> Port : %v , Driver : %v , Username : %v ,Schema : %v, SSLmod : %v", cfg.PostgreSQL.Port, cfg.PostgreSQL.Database, cfg.PostgreSQL.Username, cfg.PostgreSQL.Schema, cfg.PostgreSQL.SSLMode))
 	logs.Info(fmt.Sprintf("Task Redis    --> Port : %v , Host : %v", cfg.Redis.Port, cfg.Redis.Host))

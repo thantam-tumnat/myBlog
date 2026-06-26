@@ -7,6 +7,11 @@ type Configs struct {
 	Kafka      Kafka
 	// Minio      Minio
 	Redis      Redis
+	Jwt        Jwt
+}
+
+type Jwt struct {
+	Secret string
 }
 
 type Fiber struct {
