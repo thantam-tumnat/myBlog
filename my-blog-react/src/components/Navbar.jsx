@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// ── ข้อมูลโปรไฟล์ (แก้ค่าตรงนี้ที่เดียว) ──
-const PROFILE_NAME = 'Thantam Tumnat';
-const PROFILE_IMG = 'https://i.ibb.co/99wyY0vR/0-BADD6-F0-D2-C0-4151-A45-A-F3-F5-F7443-B2-D.jpg';
+// ── แบรนด์เว็บ (ชื่อ product ไม่ใช่ชื่อเจ้าของ) ──
+const BRAND_NAME = 'MyBlog';
 const GITHUB_URL = 'https://github.com/thantam-tumnat';
 
 export default function Navbar() {
@@ -12,14 +11,12 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white/80 backdrop-blur">
       <nav className="wrap flex h-16 items-center justify-between">
-        {/* แบรนด์ — ชื่อ + รูปโปรไฟล์ ลิงก์กลับหน้าแรก */}
-        <Link to="/" className="flex items-center gap-3">
-          <img
-            src={PROFILE_IMG}
-            alt={PROFILE_NAME}
-            className="h-9 w-9 rounded-full object-cover ring-1 ring-line"
-          />
-          <span className="font-semibold tracking-tight text-ink">{PROFILE_NAME}</span>
+        {/* แบรนด์ — wordmark ของ product ลิงก์กลับหน้าแรก */}
+        <Link to="/" className="flex items-center gap-2">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-ink text-sm font-bold text-white">
+            M
+          </span>
+          <span className="text-lg font-bold tracking-tight text-ink">{BRAND_NAME}</span>
         </Link>
 
         {/* เมนู */}
