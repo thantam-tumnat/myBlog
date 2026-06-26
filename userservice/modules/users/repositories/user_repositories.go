@@ -68,6 +68,15 @@ func (r userRepositoryRedis) CreateUser(user *entities.User) (*entities.User, er
 	return user, nil
 }
 
+func (r userRepositoryRedis) GetUserByUsername(username string) (*entities.User, error) {
+	user := entities.User{}
+	result := r.db.Where("username = ?", username).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
 func (r userRepositoryRedis) GetUsers() ([]entities.User, error) {
 	users := []entities.User{}
 	key := "userrepository::GetUsers"

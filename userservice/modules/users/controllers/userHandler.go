@@ -17,7 +17,21 @@ func NewUserHandler(r fiber.Router, userService entities.UserService) {
 	controller := &userHandler{userService: userService}
 
 	r.Post("/register", controller.CreateUser)
+	r.Post("/login", controller.Login)
 	r.Get("/getUsers", controller.GetUsers)
+}
+
+func (h *userHandler) Login(c *fiber.Ctx) error {
+	var loginRequestBody entities.LoginRequest
+	if err := c.BodyParser(&loginRequestBody); err != nil {
+		logs.Info("Invalid request to Login :", zap.Error(err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid request",
+		})
+	}
+
+	codeStatus, response := h.userService.Login(&loginRequestBody)
+	return c.Status(codeStatus).JSON(response)
 }
 
 func (h *userHandler) CreateUser(c *fiber.Ctx) error {
